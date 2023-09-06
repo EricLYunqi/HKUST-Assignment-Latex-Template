@@ -1,0 +1,160 @@
+%
+% From http://www.tug.dk/FontCatalogue/libertine/
+%
+% The license of the LATEX Font Catalogue is GNU General Public License.
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Packages
+\documentclass[danish,a4paper,11pt]{scrartcl}
+\usepackage{libertine}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\usepackage{slantsc}
+\usepackage{array}
+\usepackage{amsthm}
+\let\proof\relax
+\let\endproof\relax
+\usepackage{amsmath, amsfonts, amssymb, amscd, fancyhdr, color, comment, graphicx, environ, mathtools}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tabularx}
+\setkomafont{subsection}{\usefont{T1}{fvm}{m}{n}}
+\setkomafont{section}{\usefont{T1}{fvs}{b}{n}\Large}
+\setcounter{secnumdepth}{0}
+\pagestyle{empty}
+\usepackage{xspace}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Add new commands here
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\PP}{\mathbb P}
+
+% Add a period to the end of an abbreviation unless there's one
+% already, then \xspace.
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\cf{\emph{c.f}\onedot} \def\Cf{\emph{C.f}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
+\def\etal{\emph{et al}\onedot}
+
+\newcommand{\solution}{\noindent\underline{\textbf{Solution.}} }
+\newcommand{\remark}{\textbf{Remark.} }
+
+\newcounter{thmcnt}
+\newcounter{lmacnt}
+\newcounter{defcnt}
+\newcounter{expcnt}
+\newsavebox{\Defname}
+\newenvironment{theorem}{
+    \stepcounter{thmcnt}
+    \textsc{Theorem \arabic{thmcnt}.}
+}{\hfill\par}
+\newenvironment{lemma}{
+    \stepcounter{lmacnt}
+    \textsc{Lemma \arabic{lmacnt}.}
+}{\hfill\par}
+\newenvironment{definition}[1]
+{
+    \sbox\Defname{\emph{#1}}
+    \stepcounter{defcnt}
+    \textsc{Definition \arabic{defcnt}} (\usebox{\Defname}).
+}
+{\hfill\par}
+\newenvironment{proof}{
+    \textit{Proof.}
+}{\hfill\par}
+\newenvironment{example}{
+    \stepcounter{expcnt}
+    \textsc{Example \arabic{expcnt}.}
+}{\hfill\par}
+
+
+\begin{document}
+
+\input{titlepage}
+
+
+\noindent\underline{\textbf{Problem1.}} \textsf{\color{blue} Prove that $P=NP$.}
+
+\solution In progress. 
+
+\remark It's known as one of "The Seven Difficulties of Millennials". \\
+
+
+\noindent\underline{\textbf{Problem2.}} \textsf{\color{blue} State the differential privacy.}
+
+\solution A randomized algorithm $\mathcal{M}$ with domain $\NN^{|\chi|}$ is $(\epsilon, \delta)$-differential private if for all $\mathcal{S} \in \textnormal{Range}(\mathcal{M})$ and for all $x, y \in \NN^{|\chi|}$ such that $||x-y||_1 \leq 1$:
+\begin{align} \label{equ:dp}
+    \Pr[\mathcal{M}(x) \in \mathcal{S}] \leq \exp{(\epsilon)} \Pr[\mathcal{M}(y) \in \mathcal{S}] + \delta
+\end{align} 
+
+\remark In some cases, the $\delta$ is $0$. \\
+
+
+\noindent\underline{\textbf{Problem3.}} \textsf{\color{blue} Describe the Dijkstra algorithm}.
+
+\solution Algorithm \ref{algo:dijkstra} presents the Dijkstra algorithm in pseudo code format. As it will take a graph $G$ (weighted or unweighted) and query pair $(s, t)$ where $s$ represents the source and $t$ is terminal as input. And compute the shortest distance $d(s, t)$. In Line \ref{dijkstra:create}, we firstly create the minimum heap $\mathcal{Q}$ which stores each vertex $v$ and its distance to $s$: $d(v, s)$ as values ($\mathcal{Q}$ is maintained by $d(v, s)$), distance array $dis$ and Boole array $vis$ to record whether each vertex has been visited (\ie its shortest distance has been computed). Then \textsc{extractHeapTop} selects the vertex $u$ who has the shortest distance to $s$ at current stage (Line \ref{dijkstra:select}). Obviously, at the first run of the while loop, $u$ will be $s$. After extraction of $u$, it will be marked as visited in $vis$. Finally in Line \ref{dijkstra:update}, the algorithm will update $u$'s neighbors' distances and insert the neighbors in $\mathcal{Q}$ whose distances are updated.
+
+\underline{\textsc{updateNeighbors.}} We go a little bit further in Line 4. Note $v$ as one of $u$'s neighbors. The procedure will firstly compare $dis[v]$ with $dis[u] + w(u, v)$. If the former is bigger, then the $dis[v]$ will be updated as $dis[u] + w(u, v)$ and $v$ with its updated distance will be appended to the heap $\mathcal{Q}$.
+
+\remark At the beginning of \textsc{createAuxiliaryDataStructures}, all elements in $dis$ will be set to infinity and for entries in $vis$ will be $false$. But finally we will set $dis[s]$ to $0$ and then $s$ will be inserted into $\mathcal{Q}$. 
+\begin{algorithm}
+% \scriptsize
+\caption{Dijkstra algorithm} \label{algo:dijkstra}
+\begin{algorithmic}[1]
+    \Require Data graph $G$ and query vertex pair $(s, t)$.
+    \Ensure The shortest distance $d(s, t)$ between source $s$ and terminal $t$.
+    \State $\mathcal{Q}, dis, vis$ $\leftarrow$ \textsc{createAuxiliaryDataStructures}($G$, $s$) \Comment{$\mathcal{Q}$ is a min heap} \label{dijkstra:create}
+    \While{$\mathcal{Q}$ is \textbf{not} empty}
+        \State $u$ $\leftarrow$ \textsc{extractHeapTop}($\mathcal{Q}$) \label{dijkstra:select}
+        \State \textsc{updateNeighbors}($u$, $G$, $dis$, $vis$, $\mathcal{Q}$) \Comment{update the distance of $u$'s neighbors} \label{dijkstra:update}
+    \EndWhile
+    \State $d(s, t)$ $\leftarrow$ $dis[t]$
+    \State \textbf{return} $d(s, t)$
+\end{algorithmic}
+\end{algorithm} \\
+
+
+\noindent\underline{\textbf{Problem4.}} \textsf{\color{blue} Any interesting problems}.
+
+\solution 
+
+\begin{theorem} \label{thm:thm1}
+    This is a theorem.
+\end{theorem}
+
+\begin{lemma} \label{lma:lma1}
+    This is a lemma.
+\end{lemma}
+
+\begin{definition}{\textnormal{\textbf{\textsc{A Definition}}}} \label{def:def1}
+    This is a definition.
+\end{definition}
+
+\begin{example} \label{exp:exp1}
+    This is an example.
+\end{example}
+
+\begin{proof} \label{prf:prf1}
+    This is a proof.
+\end{proof}
+
+\remark 
+
+
+\end{document}
